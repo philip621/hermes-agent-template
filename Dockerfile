@@ -12,9 +12,12 @@ ARG HERMES_REF=v2026.4.30
 
 # gbrain (Garry Tan's opinionated brain for Hermes/OpenClaw agents) baked
 # in so it's available the moment the container boots — no manual SSH +
-# install dance after every Railway redeploy. Pin a tag for reproducibility;
-# bump intentionally.
-ARG GBRAIN_REF=v0.26.0
+# install dance after every Railway redeploy.
+#
+# gbrain doesn't publish git tags, only release branches (`garrytan/v0.X-release`).
+# Pin to the latest release branch and bump intentionally. To find the newest:
+# `git ls-remote --heads https://github.com/garrytan/gbrain.git | grep release`.
+ARG GBRAIN_REF=garrytan/v0.28-release
 
 # tini = tiny init that we run as PID 1. Without it, hermes's grandchild
 # processes (MCP stdio servers, git, bun, browser daemons spawned by tools)
