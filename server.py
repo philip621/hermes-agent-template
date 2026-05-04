@@ -255,8 +255,15 @@ def is_config_complete(data: dict[str, str] | None = None) -> bool:
     """
     if data is None:
         data = read_env(ENV_FILE)
-    has_model = bool(data.get("LLM_MODEL"))
-    has_provider = any(data.get(k) for k in PROVIDER_KEYS) or has_oauth_credentials()
+
+    # Railway / Docker / Compose inject config via process env, not .env files,
+    # so fall back to os.environ when a key isn't in .env. Without this, the
+    # gate refuses to start the gateway on any Railway-style deploy.
+    def _get(k: str) -> str:
+        return data.get(k) or os.environ.get(k, "")
+
+    has_model = bool(_get("LLM_MODEL"))
+    has_provider = any(_get(k) for k in PROVIDER_KEYS) or has_oauth_credentials()
     return has_model and has_provider
 
 
